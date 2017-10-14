@@ -9,3 +9,4 @@ Description: Compares the results between linear regression and ridge regression
 License: GPL-2
 Depends: R (>= 3.0.1), ggplot2, MASS, dplyr, tidyverse, caret
 RoxygenNote: 6.0.1.9000
+Suggests: testthat
