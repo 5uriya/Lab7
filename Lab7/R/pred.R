@@ -223,7 +223,7 @@ lmr_fit2 <- train(formula_short,
                   
                   method = "ridge",
                   
-                  trControl = ctrl,
+                  trControl = resamp,
                   
                   preProc = "scale")
 
