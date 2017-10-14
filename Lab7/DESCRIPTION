@@ -7,4 +7,5 @@ Author: Amish Satish and Balaji Ramkumar
 Maintainer: <Amish.Satish93@gmail.com>
 Description: Compares the results between linear regression and ridge regression on airport delays with visual aid.
 License: GPL-2
+Depends: R (>= 3.0.1), ggplot2, MASS, dplyr, tidyverse, caret
 RoxygenNote: 6.0.1.9000
