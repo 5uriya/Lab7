@@ -52,7 +52,7 @@ ridgereg <- setRefClass(
       
       y1 <- (data1[, dep_name1])
       
-      I1 <- diag(ncol(X))
+      I1 <- diag(ncol(X1))
       
       beta_hat1 <<- solve((t(X1) %*% X1 + lambda1 * I1)) %*% t(X1) %*% y1
       
@@ -138,9 +138,29 @@ ridgereg <- setRefClass(
       
     },
     
-    predict = function() {
+    predict = function(newdata = NULL) {
       
-      return((Fitted_values = round(y_hat1, 2)))
+      if(is.null(newdata)){
+        
+        result <- (Fitted_values = round(y_hat, 2))
+        
+      } else{
+        
+        newdata <- data.frame(newdata)
+        
+        X <- as.matrix(scale(newdata))
+        
+        beta_final <-    matrix(beta_hat, nrow=length(beta_hat))
+        
+        pred <- (X %*% beta_final) + beta_zero
+        
+        result <- pred[,1]
+        
+      
+      
+      return(result)
+      
+    }
       
     }
     

@@ -7,20 +7,11 @@ library(caret)
 
 # reading data 
 
-
-
 flights1 <- nycflights13::flights
 
 weather1 <- nycflights13::weather
 
-
-
-
-
 # Data prep
-
-
-
 
 weather1 <- weather1 %>%
   
@@ -28,9 +19,6 @@ weather1 <- weather1 %>%
 
 
 datfram1 <- left_join(flights1, weather1, by = c("origin", "time_hour")) 
-
-
-
 
 weathna <- datfram1 %>%
   
@@ -42,13 +30,10 @@ weathna <- datfram1 %>%
   
   spread(month, missing)
 
-
-
 weathna
 
 
 lapply(datfram1, FUN = function(x){summary(x)})
-
 
 
 # removing all values which do not have effect on the modelling
@@ -56,9 +41,6 @@ lapply(datfram1, FUN = function(x){summary(x)})
 datfram1 <- datfram1[complete.cases(datfram1), ] %>%
   
   dplyr::select(-year)
-
-
-
 
 
 # Reducing the amount of data used for analysis

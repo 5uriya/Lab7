@@ -1,0 +1,32 @@
+---
+title: "flight_delay"
+author: "Balaji Ramkumar and Amish Satish"
+date: "14/10/2017"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+#Insatlling the required packages
+```{r}
+library(tidyverse)
+
+library(nycflights13)
+
+library(caret)
+```
+
+#Extracting flight and weather information
+```{r}
+
+flights1 <- nycflights13::flights
+
+weather1 <- nycflights13::weather
+```
+
+
+The we create a data frame which requires the required information for testing. Since the data frame is large we are taking a part of it.
+
+
