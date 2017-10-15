@@ -164,7 +164,7 @@ ridgereg <- setRefClass(
       
     }
     
-    
+  
     
   )
   
