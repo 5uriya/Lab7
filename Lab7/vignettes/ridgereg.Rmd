@@ -14,14 +14,14 @@ This is a function for the usage of Ridge Regression. It is a part of the line r
 We take a data called as **BostonHousing Data** and test it with all the three models to check for the performance.
 
 #Installing BostonHousing Data
-```{r}
+```{r, eval=FALSE, include=TRUE}
 library(mlbench)
 library(caret)
 library(statPack)
 ```
 
 #Loading the data and creating a training set
-```{r}
+```{r, eval=FALSE, include=TRUE}
 data("BostonHousing") 
 boston_data <- BostonHousing 
 indexes = createDataPartition(boston_data$medv, p = .45, list = FALSE, times = 1)
@@ -30,7 +30,7 @@ testing_set<- boston_data[-indexes,]
 ```
 
 #Training the data using lm and leapforward
-```{r}
+```{r, eval=FALSE, include=TRUE}
 set.seed(-312312L)
 ridgereg_lm <- train(rm ~ . , data = training, method = "lm")
 print(ridgereg_lm)
@@ -40,7 +40,7 @@ print(ridgereg_leap)
 ```
 
 #Setting up Ridge
-```{r}
+```{r, eval=FALSE, include=TRUE}
 ridge <- list(type="Regression", 
               library="statPack",
               loop=NULL,
@@ -68,7 +68,7 @@ ridge$predict <- function (modelFit, new, submodels = NULL) {
 ```
 
 #Using 10-fold cross validation
-```{r}
+```{r, eval=FALSE, include=TRUE}
 cont <- trainControl(method = "repeatedcv",
                         number=10,
                         repeats = 10)
