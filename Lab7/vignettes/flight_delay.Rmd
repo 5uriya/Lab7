@@ -30,7 +30,7 @@ weather1 <- nycflights13::weather
 The we create a data frame which requires the required information for testing. Since the data frame is large we are taking a part of it. Since the data frame is too large for analysis we take a small part of the data frame so that it will be easy for us to make the analysis.
 
 #Taking a part of the data
-```{r}
+```{r, eval=FALSE, include=TRUE}
 datfram1 <- datfram1 %>%
   
   sample_frac(.1)
@@ -40,7 +40,7 @@ datfram1 <- datfram1 %>%
 Using dplye we select the coloumns which are required in the data frame and we just keep that.
 
 #Deleting unwanted columns
-```{r}
+```{r, eval=FALSE, include=TRUE}
 
 datfram1 <- datfram1 %>%
   
@@ -50,7 +50,7 @@ datfram1 <- datfram1 %>%
 ```
 
 #Creating a Training data
-```{r}
+```{r, eval=FALSE, include=TRUE}
 
 traindat<- createDataPartition(y = datfram1$arr_delay, 
                                 
@@ -68,7 +68,7 @@ tmp <- datfram1[-traindat, ]
 The we create a testing data and samples. 
 
 #Creationof models
-```{r}
+```{r, eval=FALSE, include=TRUE}
 #model1
 
 start <- Sys.time()
@@ -103,7 +103,7 @@ lmr_fit2 <- train(formula_short,
 Once the models are created, they are used for prdeicting and evaluation.
 
 #Predicting
-```{r}
+```{r, eval=FALSE, include=TRUE}
 
 lmr_class1 <- predict(lmr_fit1, newdata = validate)
 
@@ -114,7 +114,7 @@ lmr_class2 <- predict(lmr_fit2, newdata = validate)
 
 
 The next step is to determine which is the best and capable model.
-```{r}
+```{r, eval=FALSE, include=TRUE}
 
 
 resamp <- resamples(list(rreg_all_vars = lmr_fit1,
