@@ -27,6 +27,104 @@ weather1 <- nycflights13::weather
 ```
 
 
-The we create a data frame which requires the required information for testing. Since the data frame is large we are taking a part of it.
+The we create a data frame which requires the required information for testing. Since the data frame is large we are taking a part of it. Since the data frame is too large for analysis we take a small part of the data frame so that it will be easy for us to make the analysis.
+
+#Taking a part of the data
+```{r}
+datfram1 <- datfram1 %>%
+  
+  sample_frac(.1)
+```
+
+
+Using dplye we select the coloumns which are required in the data frame and we just keep that.
+
+#Deleting unwanted columns
+```{r}
+
+datfram1 <- datfram1 %>%
+  
+  dplyr::select(-c(sched_dep_time, carrier, flight, tailnum, dest,
+                   
+                   minute, time_hour, wind_gust))
+```
+
+#Creating a Training data
+```{r}
+
+traindat<- createDataPartition(y = datfram1$arr_delay, 
+                                
+                                p = .8, 
+                                
+                                list = FALSE)
+
+
+
+training <- datfram1[traindat, ]
+
+tmp <- datfram1[-traindat, ]
+```
+
+The we create a testing data and samples. 
+
+#Creationof models
+```{r}
+#model1
+
+start <- Sys.time()
+
+lmr_fit1 <- train(arr_delay ~ .,
+                  
+                  data = training,
+                  
+                  method = "ridge",
+                  
+                  trControl = resamp,
+                  
+                  preProc = "scale")
+
+end <- Sys.time()
+
+end-start
+
+#model2
+
+lmr_fit2 <- train(formula_short,
+                  
+                  data = training,
+                  
+                  method = "ridge",
+                  
+                  trControl = resamp,
+                  
+                  preProc = "scale")
+```
+
+Once the models are created, they are used for prdeicting and evaluation.
+
+#Predicting
+```{r}
+
+lmr_class1 <- predict(lmr_fit1, newdata = validate)
+
+lmr_class2 <- predict(lmr_fit2, newdata = validate)
+
+
+```
+
+
+The next step is to determine which is the best and capable model.
+```{r}
+
+
+resamp <- resamples(list(rreg_all_vars = lmr_fit1,
+                         
+                         rreg_high_cor = lmr_fit2))
+```
+
+
+From this it is shown that the model with lambda = 1e-04 is the best model.
+
+
 
 
