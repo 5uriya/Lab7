@@ -1,171 +1,55 @@
-ridgereg <- setRefClass(
-  
-  Class = "ridgereg",
-  
-  fields = list(
-    
-    formula1 = "formula",
-    
-    data1 = "data.frame",
-    
-    lambda1 = "numeric",
-    
-    beta_hat1 = "matrix",
-    
-    beta_zero1 = "numeric",
-    
-    y_hat1 = "matrix",
-    
-    data_name1 = "character"
-    
-  ),
-  
-  methods = list(
-    
-    initialize = function(formula1, data1, lambda1) {
-      
-      formula1 <<- formula1
-      
-      data1 <<- data1
-      
-      lambda1 <<- lambda1
-      
-      normalise <- TRUE
-      
-      
-      
-      data_name1 <<- deparse(substitute(data1))
-      
-      
-      X1 <- model.matrix(formula1, data1)
-      
-      
-      
-      if (normalise == TRUE) {
-        
-        
-        X1 <- scale(X1[, -1])
-        
-      }
-      
-      dep_name1 <- all.vars(expr = formula1)[1]
-      
-      y1 <- (data1[, dep_name1])
-      
-      I1 <- diag(ncol(X1))
-      
-      beta_hat1 <<- solve((t(X1) %*% X1 + lambda1 * I1)) %*% t(X1) %*% y1
-      
-      beta_zero1 <<- mean(y1)
-      
-      
-      
-      y_hat1 <<- X1 %*% beta_hat1 + beta_zero1
-      
-    },
-    
-    coef = function() {
-      
-      coef_v1 <- as.vector(beta_hat1)
-      
-      names(coef_v1) <- c(row.names(beta_hat1))
-      
-      return(coef_v1)
-      
-    },
-    
-    print = function() {
-      
-      cat(sep = "\n")
-      
-      cat("Call:")
-      
-      cat(sep = "\n")
-      
-      cat(
-        
-        paste(
-          
-          "ridgereg(",
-          
-          "formula = ",
-          
-          formula1[2],
-          
-          " ",
-          
-          formula1[1],
-          
-          " ",
-          
-          formula1[3],
-          
-          ", ",
-          
-          "data = ",
-          
-          data_name1,
-          
-          ")",
-          
-          sep = ""
-          
-        )
-        
-      )
-      
-      
-      
-      cat(sep = "\n")
-      
-      cat(sep = "\n")
-      
-      cat("Coefficients:")
-      
-      
-      
-      cat(sep = "\n")
-      
-      coef_v1 <- c(beta_zero1, beta_hat1)
-      
-      names(coef_v1) <- c("(Intercept)", row.names(beta_hat1))
-      
-      
-      
-      return(coef_v1)
-      
-      
-      
-    },
-    
-    predict = function(newdata = NULL) {
-      
-      if(is.null(newdata)){
-        
-        result <- (Fitted_values = round(y_hat, 2))
-        
-      } else{
-        
-        newdata <- data.frame(newdata)
-        
-        X <- as.matrix(scale(newdata))
-        
-        beta_final <-    matrix(beta_hat, nrow=length(beta_hat))
-        
-        pred <- (X %*% beta_final) + beta_zero
-        
-        result <- pred[,1]
-        
-      
-      
-      return(result)
-      
-    }
-      
-    }
-    
-  
-    
-  )
-  
-)
+ridgereg <- setRefClass( Class = "ridgereg",
+                         fields = list(formula = "formula",data = "data.frame",
+                                       parsedata = "character",
+                                       beta_ridge_QR ="matrix",ybar_ridge_QR="matrix", 
+                                       names="vector"),
+                         methods=list(
+                           initialize= function(formula,data,lambda,normalise = TRUE){
+                             formula  <<- formula
+                             data <<- data
+                             parsedata <<- deparse(substitute(data))
+                             x <- model.matrix(formula, data)
+                             x<- ((x[,-1]-mean(x[,-1])) / sd(x[,-1]))
+                             x<-x-mean(x)/sd(x)
+                             lambda<-lambda
+                             yy  <- all.vars(expr = formula)[1]
+                             y <- as.matrix(data[, yy])
+                             x_norm<-x
+                             #using QR decompositon
+                             identity_matrix<- diag(ncol(x_norm))
+                             QR_ridge<- qr(x_norm)
+                             Q<-qr.Q (QR_ridge)
+                             R<-qr.R(QR_ridge)
+                             RR<- ((R %*% t(Q) %*% Q) + lambda *(t(Q) %*% Q %*% solve(t(R))))
+                             
+                             beta_ridge_QR<<- backsolve(RR, crossprod(Q,y))
+                             names<<-c(colnames(R))
+                             ybar_ridge_QR<<- (x_norm %*% beta_ridge_QR)
+                             
+                           },     
+                           
+                           print= function(){
+                             
+                             
+                             cat("\n","Call:","\n",
+                                 paste("ridgereg(", "formula = ", formula[2]," ", formula[1], " ", formula[3],
+                                       ", ", "data = ", parsedata, ", lambda = 0)",sep = "", collapse = "\n" ),
+                                 "\n","Coefficients:","\n",
+                                 format(names, justify = "centre",width = 12),"\n",
+                                 format(round(beta_ridge_QR,2), justify = "centre",width = 12))
+                             
+                           },
+                           
+                           predict =function(){
+                             cat("\n \n Predicted values or fitted values using QR decomposition:","\n\n")
+                             return(as.vector(round(ybar_ridge_QR, 2)))
+                           },
+                           
+                           coef= function(){
+                             cat("\n \nRegressions coefficients using QR decomposition:","\n\n")
+                             ridge_coef_QR <-as.vector(round(beta_ridge_QR,2))
+                             names(ridge_coef_QR)<-names
+                             return (ridge_coef_QR)
+                           }
+                           
+                         ))
